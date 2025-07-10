@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ReturnShield AI Predictor</title>
+</head>
+<body>
+    <h2>Test Walmart Return Prediction API</h2>
+    <button onclick="getPrediction()">Predict Return Risk</button>
+    <pre id="output" style="margin-top: 20px; white-space: pre-wrap;"></pre>
+
+    <script>
+        async function getPrediction() {
+            const payload = {
+                user_id: "U123",
+                total_orders: 15,
+                total_returns: 3,
+                days_to_return_avg: 2.8,
+                high_value_returns: 1,
+                category_return_ratio: 0.20,
+                exchange_ratio: 0.15,
+                damaged_returns: 0,
+                location: "California",
+                device_fingerprint: "dev123abc"
+            };
+
+            try {
+                const response = await fetch("https://my-walmart-api.onrender.com/predict/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    document.getElementById("output").textContent =
+                        `Error: ${response.status} ${response.statusText}\n${error}`;
+                    return;
+                }
+
+                const data = await response.json();
+                document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById("output").textContent = "Request failed: " + error;
+            }
+        }
+    </script>
+</body>
+</html>
